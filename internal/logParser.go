@@ -3,7 +3,6 @@ package internal
 import (
 	"bufio"
 	"encoding/json"
-	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -14,7 +13,7 @@ type LogParser struct {
 	FilePath string
 }
 
-func (lp *LogParser) Parse() {
+func (lp *LogParser) Parse(output string) {
 	file, err := os.Open(lp.FilePath)
 	if err != nil {
 		log.Fatal(err)
@@ -56,17 +55,22 @@ func (lp *LogParser) Parse() {
 		}
 	}
 
+	if err := scanner.Err(); err != nil {
+		panic(err)
+	}
+
 	wg.Wait()
 
 	jsonData, err := json.Marshal(games)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
-	fmt.Println(string(jsonData))
+	err = os.WriteFile(output, jsonData, 0644)
+	if err != nil {
+		panic(err)
+	}
+	log.Println("Data saved to:", output)
 
-	if err := scanner.Err(); err != nil {
-		log.Fatal(err)
-	}
 }
 
 // splitTimeFromLog splits the time from a log line and returns the time and the remaining part of the line.
