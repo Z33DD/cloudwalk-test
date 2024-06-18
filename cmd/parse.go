@@ -24,8 +24,6 @@ var parseCmd = &cobra.Command{
 		}
 		logParser := i.LogParser{FilePath: fileFlag}
 		logParser.Parse()
-
-		fmt.Println("parse called")
 	},
 }
 

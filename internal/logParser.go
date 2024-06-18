@@ -2,9 +2,12 @@ package internal
 
 import (
 	"bufio"
+	"encoding/json"
+	"fmt"
 	"log"
 	"os"
 	"strings"
+	"sync"
 )
 
 type LogParser struct {
@@ -21,24 +24,45 @@ func (lp *LogParser) Parse() {
 	var games []*Game
 
 	var game *Game = nil
+	gameId := 0
 
+	wg := sync.WaitGroup{}
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := scanner.Text()
 		_, remaining := splitTimeFromLog(line)
 
 		if strings.Contains(remaining, "InitGame") {
-			game = &Game{}
+			game = &Game{Id: gameId}
 			game.New(remaining)
+			gameId++
 		} else if strings.Contains(remaining, "ShutdownGame") || strings.Contains(remaining, "------------------------------------------------------------") {
-			if game != nil {
-				games = append(games, game)
-				game = nil
+			if game == nil {
+				continue
 			}
-		}
+			games = append(games, game)
+			game = nil
 
+		} else {
+			if game == nil {
+				continue
+			}
+			wg.Add(1)
+			go func(g *Game) {
+				defer wg.Done()
+				g.ParseNewLogLine(remaining)
+			}(game)
+
+		}
 	}
-	log.Println(len(games))
+
+	wg.Wait()
+
+	jsonData, err := json.Marshal(games)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(string(jsonData))
 
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
