@@ -6,7 +6,7 @@ all: build
 build:
 	@echo "Building..."
 	
-	@go build -o main cmd/cli/main.go
+	@go build -o cloudwalk cmd/cli/main.go
 
 # Run the application
 run:
@@ -20,7 +20,7 @@ test:
 # Clean the binary
 clean:
 	@echo "Cleaning..."
-	@rm -f main
+	@rm -f cloudwalk
 
 # Live Reload
 watch:
