@@ -1,10 +1,10 @@
 # Project cloudwalk-test
 
-One Paragraph of project description goes here
+This is a parser to the Quake server logs that generates stats for kills in the game.
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
 ## MakeFile
 
@@ -20,17 +20,7 @@ make build
 
 run the application
 ```bash
-make run
-```
-
-Create DB container
-```bash
-make docker-run
-```
-
-Shutdown DB container
-```bash
-make docker-down
+./cloudwalk parse --file qgames.log --output stats.json
 ```
 
 live reload the application
