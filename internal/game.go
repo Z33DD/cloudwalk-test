@@ -37,12 +37,12 @@ func (g *Game) New(line string) {
 func (g *Game) ParseNewLogLine(line string) {
 
 	if strings.HasPrefix(line, "Kill:") {
-		g.processKill(line)
+		g.ProcessKill(line)
 	}
 }
 
-func (g *Game) processKill(line string) {
-	killer, killed, mean := g.parseKill(line)
+func (g *Game) ProcessKill(line string) {
+	killer, killed, mean := g.ParseKill(line)
 	log.Println(line)
 	log.Printf("killer: %s, killed: %s, mean: %s\n", killer, killed, mean)
 	log.Println()
@@ -62,7 +62,7 @@ func (g *Game) processKill(line string) {
 	g.KillsByMean[mean]++
 	g.TotalKills++
 }
-func (g *Game) parseKill(line string) (string, string, string) {
+func (g *Game) ParseKill(line string) (string, string, string) {
 	re := regexp.MustCompile(`Kill: \d+ \d+ \d+: ([^\s]+(?: [^\s]+)*) killed ([^\s]+(?: [^\s]+)*) by ([^\s]+(?: [^\s]+)*)`)
 	matches := re.FindStringSubmatch(line)
 	if len(matches) != 4 {
